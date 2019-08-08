@@ -68,14 +68,19 @@ final class Server
     /**
      * Get a response from the application callable and emits it.
      *
+     * The application callable is called with the given arguments.
+     *
      * Any output leacking from the callable is buffered and emitted according
      * to the output buffering mode.
      *
      * - self::PREPEND => prepended to the response body (default)
      * - self::APPEND => appended to the response body
      * - self::CLEAN => not emitted
+     *
+     * @param mixed ...$xs
+     * @return void
      */
-    public function run()
+    public function run(...$xs)
     {
         // start the output buffer.
         ob_start();
@@ -83,7 +88,7 @@ final class Server
         $level = ob_get_level();
 
         // get a response.
-        $response = ($this->app)();
+        $response = ($this->app)(...$xs);
 
         if (! $response instanceof ResponseInterface) {
             throw new \UnexpectedValueException(
